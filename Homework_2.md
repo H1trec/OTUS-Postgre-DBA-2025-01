@@ -81,3 +81,36 @@ INSERT 0 1
 ```
 
 Подключаемся с локально установленного на ПК PGAdmin и проверяем наличие данных:
+![PGADMIN](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/PGadmin.JPG?raw=true)  
+
+Удаляем контйнер с сервером:
+```
+daemom@WIN-I0O5TP50MV7:~$ sudo docker stop pg_server
+pg_server
+daemom@WIN-I0O5TP50MV7:~$ sudo docker rm pg_server
+pg_server
+```
+Создаем контейнер с сервером снова:
+```
+daemom@WIN-I0O5TP50MV7:~$ sudo docker run --name pg_server --network pg-net -e POSTGRES_PASSWORD=postgres -d -p 5430:5432 -v /var/lib/postgres:/var/lib/postgresql/data postgres:17
+fb7fa2c819a5aa52b1f41f2dbfa52a1301838c8b8f4cfcc4c124f025b7f768a0
+```
+Подключаемся к контейнеру через клиентский контейнер:
+```
+daemom@WIN-I0O5TP50MV7:~$ sudo docker run -it --rm --network pg-net --name pg-client postgres:17 psql -h pg_server -U postgres -d dockerdb
+Password for user postgres:
+psql (17.3 (Debian 17.3-1.pgdg120+1))
+Type "help" for help.
+```
+Проверяем наличие данных:
+```
+dockerdb=# select * from docker_persons;
+ id | first_name | second_name
+----+------------+-------------
+  1 | ivan       | ivanov
+  2 | petr       | petrov
+  3 | egor       | egorov
+(3 rows)
+
+dockerdb=#
+```

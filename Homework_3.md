@@ -29,3 +29,4 @@ Ver Cluster Port Status Owner    Data directory              Log file
 17  main    5432 down   postgres /var/lib/postgresql/17/main /var/log/postgresql/postgresql-17-main.log
 ```
 Монтироуем дполнитеьный диск на VM:
+![NEWVOLUME](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/New_Volume.JPG?raw=true)  

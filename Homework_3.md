@@ -28,5 +28,42 @@ daemom@MyOVM:/etc/postgresql/17/main$ sudo -u postgres pg_lsclusters
 Ver Cluster Port Status Owner    Data directory              Log file
 17  main    5432 down   postgres /var/lib/postgresql/17/main /var/log/postgresql/postgresql-17-main.log
 ```
-Монтироуем дполнитеьный диск на VM:
-![NEWVOLUME](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/New_Volume.JPG?raw=true)  
+Монтироуем дополнитеьный диск на VM:
+![NEWVOLUME](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/New_Volume.JPG?raw=true)    
+
+Переносим даные:
+```
+daemom@MyOVM:/media/daemom$ sudo chown -R postgres:postgres /media/daemom/D
+daemom@MyOVM:/media/daemom$ sudo mv /var/lib/postgresql/17 /media/daemom/D
+```
+При попытке запуска кластер не стартует поскольку мы перенесли все данные в другое место, чтобы это справить необходимо поправить файл конфигурации /etc/postgresql/17/main/postgresql.conf:
+```
+data_directory = '/media/daemom/D/17/main'
+```
+Дополнительно останавливаем сервис:
+```
+sudo pkill -u postgres
+daemom@MyOVM:~$ ps -u postgres
+    PID TTY          TIME CMD
+```
+Запускаем кластер:
+```
+daemom@MyOVM:/usr/lib/postgresql/17/bin$ sudo -u postgres pg_ctlcluster 17 main start
+Warning: the cluster will not be running as a systemd service. Consider using systemctl:
+  sudo systemctl start postgresql@17-main
+Cluster is already running.
+```
+Подключаемс и проверяем наличие данных:
+```
+daemom@MyOVM:/usr/lib/postgresql/17/bin$ sudo -u postgres psql
+psql (17.3 (Ubuntu 17.3-1.pgdg24.10+1))
+Type "help" for help.
+
+postgres=# select * from persons_vm;
+ id | first_name | second_name
+----+------------+-------------
+  1 | ivan       | ivanov
+  2 | petr       | petrov
+  3 | egor       | egorov
+(3 rows)
+```

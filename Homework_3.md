@@ -67,3 +67,51 @@ postgres=# select * from persons_vm;
   3 | egor       | egorov
 (3 rows)
 ```
+###Задание со *
+Создал вторую VM, так установил на нее  Ubuntu 24.10 и  PostgreSQL 17 : 
+```
+daemom@MyOVM2:~$ sudo pg_lsclusters
+Ver Cluster Port Status Owner    Data directory              Log file
+17  main    5432 online postgres /var/lib/postgresql/17/main /var/log/postgresql/postgresql-17-main.log
+```
+Затем на первой VM остовил кластер и сервисы PostgreSQL:
+```
+daemom@MyOVM:/usr/lib/postgresql/17/bin$ sudo pg_ctlcluster 17 main stop
+daemom@MyOVM:/usr/lib/postgresql/17/bin$ sudo pg_lsclusters
+Ver Cluster Port Status Owner    Data directory          Log file
+17  main    5432 down   postgres /media/daemom/D/17/main /var/log/postgresql/postgresql-17-main.log
+```
+Затем через GUI интрерфейс отмонтировал дополнительный диск, остановил обе VM, примонтировал диск ко второй VM и запустил ее.  
+Затем останавливаем кластер и сервисы:
+```
+daemom@MyOVM2:~$ sudo pg_ctlcluster 17 main stop
+daemom@MyOVM2:~$ sudo pkill -u postgres
+daemom@MyOVM2:~$ sudo -u postgres pg_lsclusters
+Ver Cluster Port Status Owner    Data directory              Log file
+17  main    5432 down   postgres /var/lib/postgresql/17/main /var/log/postgresql/postgresql-17-main.log
+```
+Удалаем каталог:
+```
+daemom@MyOVM2:~$ sudo rm -R /var/lib/postgresql/17
+```
+правим снова конфигурационный файл /etc/postgresql/17/main/postgresql.conf и высталяем права на каталог:
+```
+правки в файле:data_directory = '/media/daemom/D/17/main'
+
+sudo chown -R postgres:postgres /media/daemom/D
+sudo chmod -R 777 /media/daemom
+```
+Запускаем кластер:
+```
+daemom@MyOVM2:~$ sudo -u postgres pg_ctlcluster 17 main start
+Warning: the cluster will not be running as a systemd service. Consider using systemctl:
+  sudo systemctl start postgresql@17-main
+daemom@MyOVM2:~$ sudo pg_lsclusters
+Ver Cluster Port Status Owner    Data directory          Log file
+17  main    5432 online postgres /media/daemom/D/17/main /var/log/postgresql/postgresql-17-main.log
+```
+
+Странно, но только при выставлнении прав : sudo chmod -R 777 /media/daemom кластер смог подняться как в первом, так и во втором случае. Прав вида sudo chmod -R u+rwx,g-rwx,o-rwx '/media/daemom/D' не хватало.
+
+
+

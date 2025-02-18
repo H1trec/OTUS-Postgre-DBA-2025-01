@@ -1,5 +1,5 @@
-##Физичесский уровень PostgreSQL
-###Создание и настройка VM
+## Физичесский уровень PostgreSQL
+### Создание и настройка VM
 Я установил Oracle Virual Box, скачал образ Ubuntu 24.10 и установил ее на виртуальную машину. Псоел усновил на нее PostgreSQL 17  
 ```
 daemom@MyOVM:~$ sudo -u postgres pg_lsclusters
@@ -67,7 +67,7 @@ postgres=# select * from persons_vm;
   3 | egor       | egorov
 (3 rows)
 ```
-###Задание со *
+### Задание со *
 Создал вторую VM, так установил на нее  Ubuntu 24.10 и  PostgreSQL 17 : 
 ```
 daemom@MyOVM2:~$ sudo pg_lsclusters

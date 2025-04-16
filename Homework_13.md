@@ -123,7 +123,26 @@ CREATE PUBLICATION
 Создаем подписки на 1 сервер для таблицы customers и на 2 сервер для таблицы orders.
 
 #### Проверяем репликацию
+Вставляем данные на первом сервере в таблицу customers:   
+![INSCAST](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/data_cast.JPG?raw=true)
 
+Проверяем таблицу на втором сервере:
+![DATACAST2](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/cast02.JPG?raw=true)
+
+Проверяем таблицу на третьем сервере:
+![DATACAST3](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/cast_03.JPG?raw=true)
+
+Вставляем данные на втором сервере в таблицу orders:  
+![INSORD](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/data_ord.JPG?raw=true)
+
+Проверяем таблицу на первом сервере:
+![DATAORD1](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/orders_01.JPG?raw=true)
+
+Проверяем таблицу на третьем сервере:
+![DATAORD3](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/orders_03.JPG?raw=true)
+
+
+Видим, что данные подтянулись во все таблицы. Все работает успешно.
 
 
 

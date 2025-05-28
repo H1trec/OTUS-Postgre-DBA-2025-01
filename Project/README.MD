@@ -382,9 +382,162 @@ HINT: you should activate USER_GRANTS for a connection without DBA privilege. Co
 ```
 * Перенос структуры
 
-Создаем в целевой БД Postgres польоавтеля SH и начинаем выполнять сформированные скрипты. Таблицы, патриции, view, mview. После выполнения всех скриптов получилась следующая БД:
-![SCHEMA](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/schema.JPG?raw=true)
+Создаем в целевой БД Postgres польоавтеля SH и начинаем выполнять сформированные скрипты. Таблицы, патриции, view, mview. После выполнения всех скриптов получилась следующая БД:   
+![SCHEMA](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/schema.JPG?raw=true)   
 
+* Перенос данных
+
+При переное данных необхожимо учесть, что в таблицах есть FK и переносить необходимо в правильной последовательности.
+Сначала переносим таблицы, в которых нет FK:
+```
+ora2pg -b D:\ora2pg\data -t COPY -a SUPPLEMENTARY_DEMOGRAPHICS,CHANNELS,COUNTRIES,PRODUCTS,TIMES,PROMOTIONS
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-28 20:52:12] [========================>] 6/6 tables (100.0%) end of scanning.
+
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:33] [========================>] 5/5 rows (100.0%) Table CHANNELS (5 recs/sec)
+[2025-05-28 20:52:33] [>                        ]    5/6941 total rows (0.1%) - (1 sec., avg: 5 recs/sec).
+[2025-05-28 20:52:33] [>                        ]    5/6941 rows (0.1%) on total estimated data (1 sec., avg: 5 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:33] [========================>] 35/35 rows (100.0%) Table COUNTRIES (35 recs/sec)
+[2025-05-28 20:52:33] [>                        ]   40/6941 total rows (0.6%) - (1 sec., avg: 40 recs/sec).
+[2025-05-28 20:52:33] [>                        ]   40/6941 rows (0.6%) on total estimated data (1 sec., avg: 40 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:33] [========================>] 72/72 rows (100.0%) Table PRODUCTS (72 recs/sec)
+[2025-05-28 20:52:33] [>                        ]  112/6941 total rows (1.6%) - (1 sec., avg: 112 recs/sec).
+[2025-05-28 20:52:33] [>                        ]  112/6941 rows (1.6%) on total estimated data (1 sec., avg: 112 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:34] [========================>] 503/503 rows (100.0%) Table PROMOTIONS (503 recs/sec)
+[2025-05-28 20:52:34] [==>                      ]  615/6941 total rows (8.9%) - (2 sec., avg: 307 recs/sec).
+[2025-05-28 20:52:34] [==>                      ]  615/6941 rows (8.9%) on total estimated data (2 sec., avg: 307 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:35] [========================>] 4500/4500 rows (100.0%) Table SUPPLEMENTARY_DEMOGRAPHICS (4500 recs/sec)
+[2025-05-28 20:52:35] [=================>       ] 5115/6941 total rows (73.7%) - (3 sec., avg: 1705 recs/sec).
+[2025-05-28 20:52:35] [=================>       ] 5115/6941 rows (73.7%) on total estimated data (3 sec., avg: 1705 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:52:36] [========================>] 1826/1826 rows (100.0%) Table TIMES (1826 recs/sec)
+[2025-05-28 20:52:36] [========================>] 6941/6941 total rows (100.0%) - (4 sec., avg: 1735 recs/sec).
+[2025-05-28 20:52:36] [========================>] 6941/6941 rows (100.0%) on total estimated data (4 sec., avg: 1735 recs/sec)
+
+Schema Export Complete
+```
+Затем перенсим таблицы с FK, обращая внимание на зависимости
+```
+ora2pg -b D:\ora2pg\data -t COPY -a CUSTOMERS,COSTS,SALES
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-28 20:55:25] [========================>] 3/3 tables (100.0%) end of scanning.
+
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:55:51] [=>                       ]  3715/82112 rows (4.5%) Table COSTS_Q2_2021 (3715 recs/sec)
+[2025-05-28 20:55:51] [>                        ]   3715/137612 total rows (2.7%) - (1 sec., avg: 3715 recs/sec).
+[2025-05-28 20:55:52] [=>                       ]  4577/82112 rows (5.6%) Table COSTS_Q4_2019 (4577 recs/sec)
+[2025-05-28 20:55:52] [=>                       ]   8292/137612 total rows (6.0%) - (2 sec., avg: 4146 recs/sec).
+[2025-05-28 20:55:52] [=>                       ]  5884/82112 rows (7.2%) Table COSTS_Q1_2020 (5884 recs/sec)
+[2025-05-28 20:55:52] [==>                      ]  14176/137612 total rows (10.3%) - (2 sec., avg: 7088 recs/sec).
+[2025-05-28 20:55:53] [=>                       ]  4129/82112 rows (5.0%) Table COSTS_Q3_2019 (4129 recs/sec)
+[2025-05-28 20:55:53] [===>                     ]  18305/137612 total rows (13.3%) - (3 sec., avg: 6101 recs/sec).
+[2025-05-28 20:55:53] [>                        ]  2397/82112 rows (2.9%) Table COSTS_Q2_2019 (2397 recs/sec)
+[2025-05-28 20:55:53] [===>                     ]  20702/137612 total rows (15.0%) - (3 sec., avg: 6900 recs/sec).
+[2025-05-28 20:55:54] [=>                       ]  4411/82112 rows (5.4%) Table COSTS_Q1_2019 (4411 recs/sec)
+[2025-05-28 20:55:54] [====>                    ]  25113/137612 total rows (18.2%) - (4 sec., avg: 6278 recs/sec).
+[2025-05-28 20:55:54] [=>                       ]  4179/82112 rows (5.1%) Table COSTS_Q2_2020 (4179 recs/sec)
+[2025-05-28 20:55:54] [=====>                   ]  29292/137612 total rows (21.3%) - (4 sec., avg: 7323 recs/sec).
+[2025-05-28 20:55:55] [=>                       ]  4336/82112 rows (5.3%) Table COSTS_Q3_2020 (4336 recs/sec)
+[2025-05-28 20:55:55] [=====>                   ]  33628/137612 total rows (24.4%) - (5 sec., avg: 6725 recs/sec).
+[2025-05-28 20:55:55] [=>                       ]  5060/82112 rows (6.2%) Table COSTS_Q4_2020 (5060 recs/sec)
+[2025-05-28 20:55:55] [======>                  ]  38688/137612 total rows (28.1%) - (5 sec., avg: 7737 recs/sec).
+[2025-05-28 20:55:56] [=>                       ]  3772/82112 rows (4.6%) Table COSTS_Q1_2021 (3772 recs/sec)
+[2025-05-28 20:55:56] [=======>                 ]  42460/137612 total rows (30.9%) - (6 sec., avg: 7076 recs/sec).
+[2025-05-28 20:55:57] [==>                      ]  7328/82112 rows (8.9%) Table COSTS_Q1_2022 (7328 recs/sec)
+[2025-05-28 20:55:57] [========>                ]  49788/137612 total rows (36.2%) - (7 sec., avg: 7112 recs/sec).
+[2025-05-28 20:55:57] [=>                       ]  5088/82112 rows (6.2%) Table COSTS_Q4_2021 (5088 recs/sec)
+[2025-05-28 20:55:57] [=========>               ]  54876/137612 total rows (39.9%) - (7 sec., avg: 7839 recs/sec).
+[2025-05-28 20:55:58] [=>                       ]  4798/82112 rows (5.8%) Table COSTS_Q3_2021 (4798 recs/sec)
+[2025-05-28 20:55:58] [==========>              ]  59674/137612 total rows (43.4%) - (8 sec., avg: 7459 recs/sec).
+[2025-05-28 20:55:59] [=>                       ]  5882/82112 rows (7.2%) Table COSTS_Q2_2022 (5882 recs/sec)
+[2025-05-28 20:55:59] [===========>             ]  65556/137612 total rows (47.6%) - (9 sec., avg: 7284 recs/sec).
+[2025-05-28 20:55:59] [==>                      ]  7545/82112 rows (9.2%) Table COSTS_Q3_2022 (7545 recs/sec)
+[2025-05-28 20:55:59] [============>            ]  73101/137612 total rows (53.1%) - (9 sec., avg: 8122 recs/sec).
+[2025-05-28 20:56:01] [==>                      ]  9011/82112 rows (11.0%) Table COSTS_Q4_2022 (4505 recs/sec)
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 total rows (59.7%) - (11 sec., avg: 7464 recs/sec).
+[2025-05-28 20:56:01] [>                        ]     0/82112 rows (0.0%) Table COSTS_Q1_2023 (0 recs/sec)
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 total rows (59.7%) - (11 sec., avg: 7464 recs/sec).
+[2025-05-28 20:56:01] [>                        ]     0/82112 rows (0.0%) Table COSTS_Q2_2023 (0 recs/sec)
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 total rows (59.7%) - (11 sec., avg: 7464 recs/sec).
+[2025-05-28 20:56:01] [>                        ]     0/82112 rows (0.0%) Table COSTS_Q3_2023 (0 recs/sec)
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 total rows (59.7%) - (11 sec., avg: 7464 recs/sec).
+[2025-05-28 20:56:01] [>                        ]     0/82112 rows (0.0%) Table COSTS_Q4_2023 (0 recs/sec)
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 total rows (59.7%) - (11 sec., avg: 7464 recs/sec).
+[2025-05-28 20:56:01] [==============>          ]  82112/137612 rows (59.7%) on total estimated data (11 sec., avg: 7464 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:56:14] [========================>] 55500/55500 rows (100.0%) Table CUSTOMERS (4269 recs/sec)
+[2025-05-28 20:56:14] [========================>] 137612/137612 total rows (100.0%) - (24 sec., avg: 5733 recs/sec).
+[2025-05-28 20:56:14] [========================>] 137612/137612 rows (100.0%) on total estimated data (24 sec., avg: 5733 recs/sec)
+SET client_encoding TO 'UTF8';
+SET synchronous_commit TO off;
+SET search_path = sh,public;
+
+[2025-05-28 20:56:15] [========================>] 0/0 rows (100.0%) Table SALES_2018 (0 recs/sec)
+[2025-05-28 20:56:15] [========================>] 137612/137612 total rows (100.0%) - (25 sec., avg: 5504 recs/sec).
+[2025-05-28 20:56:25] [========================>] 79445/0 rows (100.0%) Table SALES_H1_2019 (7944 recs/sec)
+[2025-05-28 20:56:25] [========================>] 217057/137612 total rows (157.7%) - (35 sec., avg: 6201 recs/sec).
+[2025-05-28 20:56:39] [========================>] 99389/0 rows (100.0%) Table SALES_H2_2019 (7099 recs/sec)
+[2025-05-28 20:56:39] [========================>] 316446/137612 total rows (230.0%) - (49 sec., avg: 6458 recs/sec).
+[2025-05-28 20:56:48] [========================>] 64186/0 rows (100.0%) Table SALES_Q1_2020 (7131 recs/sec)
+[2025-05-28 20:56:48] [========================>] 380632/137612 total rows (276.6%) - (58 sec., avg: 6562 recs/sec).
+[2025-05-28 20:56:57] [========================>] 62388/0 rows (100.0%) Table SALES_Q4_2020 (6932 recs/sec)
+[2025-05-28 20:56:57] [========================>] 443020/137612 total rows (321.9%) - (67 sec., avg: 6612 recs/sec).
+[2025-05-28 20:57:06] [========================>] 62197/0 rows (100.0%) Table SALES_Q1_2021 (6910 recs/sec)
+[2025-05-28 20:57:06] [========================>] 505217/137612 total rows (367.1%) - (76 sec., avg: 6647 recs/sec).
+[2025-05-28 20:57:13] [========================>] 55515/0 rows (100.0%) Table SALES_Q2_2021 (7930 recs/sec)
+[2025-05-28 20:57:13] [========================>] 560732/137612 total rows (407.5%) - (83 sec., avg: 6755 recs/sec).
+[2025-05-28 20:57:22] [========================>] 58950/0 rows (100.0%) Table SALES_Q3_2021 (6550 recs/sec)
+[2025-05-28 20:57:22] [========================>] 619682/137612 total rows (450.3%) - (92 sec., avg: 6735 recs/sec).
+[2025-05-28 20:57:29] [========================>] 55984/0 rows (100.0%) Table SALES_Q4_2021 (7997 recs/sec)
+[2025-05-28 20:57:29] [========================>] 675666/137612 total rows (491.0%) - (99 sec., avg: 6824 recs/sec).
+[2025-05-28 20:57:38] [========================>] 60608/0 rows (100.0%) Table SALES_Q1_2022 (6734 recs/sec)
+[2025-05-28 20:57:38] [========================>] 736274/137612 total rows (535.0%) - (108 sec., avg: 6817 recs/sec).
+[2025-05-28 20:57:46] [========================>] 63292/0 rows (100.0%) Table SALES_Q2_2022 (7911 recs/sec)
+[2025-05-28 20:57:46] [========================>] 799566/137612 total rows (581.0%) - (116 sec., avg: 6892 recs/sec).
+[2025-05-28 20:57:55] [========================>] 65769/0 rows (100.0%) Table SALES_Q3_2022 (7307 recs/sec)
+[2025-05-28 20:57:55] [========================>] 865335/137612 total rows (628.8%) - (125 sec., avg: 6922 recs/sec).
+[2025-05-28 20:58:05] [========================>] 69749/0 rows (100.0%) Table SALES_Q4_2022 (6974 recs/sec)
+[2025-05-28 20:58:05] [========================>] 935084/137612 total rows (679.5%) - (135 sec., avg: 6926 recs/sec).
+[2025-05-28 20:58:13] [========================>] 54233/0 rows (100.0%) Table SALES_Q2_2020 (6779 recs/sec)
+[2025-05-28 20:58:13] [========================>] 989317/137612 total rows (718.9%) - (143 sec., avg: 6918 recs/sec).
+[2025-05-28 20:58:22] [========================>] 67138/0 rows (100.0%) Table SALES_Q3_2020 (7459 recs/sec)
+[2025-05-28 20:58:22] [========================>] 1056455/137612 total rows (767.7%) - (152 sec., avg: 6950 recs/sec).
+[2025-05-28 20:58:22] [========================>] 137612/137612 rows (100.0%) on total estimated data (152 sec., avg: 905 recs/sec)
+
+Schema Export Complete
+```
+Проверяем, что данные залились   
+![COSTS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/cost.JPG?raw=true)   
+![CHANNELS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/sh.JPG?raw=true)   
 ### Используемые ресурсы
 * Дистрибутивы docker oracle: https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance   
 * Дисрибутив БД Oracle,с данными: https://github.com/oracle-samples/db-sample-schemas/releases/tag/v23.3   

@@ -264,6 +264,65 @@ Please check the installation verification output above.
 
 ### Установка и настройка ПО для миграции
 
+Для выполнения миграции была выбрана утилита Ora2Pg. Дистрибутив можно скачать с официальнойй сттраницы проекта: https://github.com/darold/ora2pg/releases.   
+Сначала я пытался развернуть всё необходимо для миграции ПО на той виртуальной машине где установлен Postgres и Docker с развернотой БД Oracle, однако постоянно возникали пробелмы с установкой модуля DBD::Oracle.   
+В конце концов было принято решение развернуть ПО для миграции на локальной WIN машине.
+Этапы установки:   
+1. Устанавливаем клиенты Oracle:   
+   * instantclient-basic-windows.x64-23.8.0.25.04   
+   * instantclient-jdbc-windows.x64-23.8.0.25.04   
+   * instantclient-sqlplus-windows.x64-23.8.0.25.04   
+   * instantclient-tools-windows.x64-23.8.0.25.04   
+   * instantclient-sdk-windows.x64-23.8.0.25.04   
+Все скачивается с официальной страницы Oracle в виде zip архивов и распаковывается в одну директорию. Данную директорию необходимо потом  
+ прописать в переменные окружения:   
+* ORACLE_HOME   
+* LD_LIBRARY_PATH   
+* Path   
+2. Устанавливаем Perl   
+Я выбрал strawberry-perl-5.40.2.1-64bit   
+
+3. Устанавливаем модули для работы с БД   
+    * DBD::Oracle    
+    * DBD::Pg  
+Оба модуля уснавливаются через cpan командами install DBD::Oracle и install DBD::Pg   
+
+4. Устанавливаем Ora2Pg   
+
+Необходимо разархивировать скачанный дистрибутив в любую директорию (я выбрал D:\ora2pg).     
+Выполнить команды Perl:   
+
+*  perl C:\Ora2Pg\Makefile.PL   
+
+*  gmake && gmake install   
+Далее настраиваем ora2pg через конфигурационный файл ora2pg.conf.   
+
+Настройка Oracle_HOME:   
+ORACLE_HOME	D:\instantclient_23_8   
+
+Путь к базе Oracle:   
+ORACLE_DSN	dbi:Oracle:host=192.168.56.1;sid=FREE;port=1521   
+ORACLE_USER	SH   
+ORACLE_PWD	SH   
+Настройки кодировки:   
+NLS_LANG	AMERICAN_AMERICA.AL32UTF8   
+CLIENT_ENCODING	UTF8   
+
+Настройки подключения в БД PostgreSQL:   
+PG_DSN		dbi:Pg:dbname=migrate;host=192.168.56.1;port=5432   
+PG_USER	postgres   
+PG_PWD		12345   
+
+Настройки экспорта схемы:   
+
+EXPORT_SCHEMA	1   
+SCHEMA		SH   
+CREATE_SCHEMA	1  
+COMPILE_SCHEMA	1   
+
+Отключение преобразования bitmap индексов в gin:   
+BITMAP_AS_GIN		0   
+
 ### Миграция
 
 ### Используемые ресурсы

@@ -383,7 +383,7 @@ HINT: you should activate USER_GRANTS for a connection without DBA privilege. Co
 * Перенос структуры
 
 Создаем в целевой БД Postgres польоавтеля SH и начинаем выполнять сформированные скрипты. Таблицы, патриции, view, mview. После выполнения всех скриптов получилась следующая БД:
-![INSCAST](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/schema.JPG?raw=true)
+![SCHEMA](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/schema.JPG?raw=true)
 
 ### Используемые ресурсы
 * Дистрибутивы docker oracle: https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance   

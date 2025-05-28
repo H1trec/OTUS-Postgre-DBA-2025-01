@@ -324,6 +324,66 @@ COMPILE_SCHEMA	1
 BITMAP_AS_GIN		0   
 
 ### Миграция
+1.  Миграция структуры
+  Для начала посмотрим что у нас есть в схеме при помощи команды: ora2pg -t SHOW_REPORT
+```
+[2025-05-27 22:13:13] [========================>] 9/9 tables (100.0%) end of scanning.
+[2025-05-27 22:13:19] [========================>] 11/11 objects types (100.0%) end of objects auditing.
+-------------------------------------------------------------------------------
+Ora2Pg v25.0 - Database Migration Report
+-------------------------------------------------------------------------------
+Version Oracle Database 23ai Free Release 23.0.0.0.0
+Schema  SH
+Size    1.56 MB
+
+-------------------------------------------------------------------------------
+Object  Number  Invalid Comments        Details
+-------------------------------------------------------------------------------
+DATABASE LINK   0       0       Database links will be exported as SQL/MED PostgreSQL's Foreign Data Wrapper (FDW) extensions using oracle_fdw.
+DIMENSION       5       0
+GLOBAL TEMPORARY TABLE  0       0       Global temporary table are not supported by PostgreSQL and will not be exported. You will have to rewrite some application code to match the PostgreSQL temporary table behavior.
+INDEX   21      0       14 index(es) are concerned by the export, others are automatically generated and will do so on PostgreSQL. Bitmap will be exported as btree_gin index(es). Domain index are exported as b-tree but commented to be edited to mainly use FTS. Cluster, bitmap join and IOT indexes will not be exported at all. Reverse indexes are not exported too, you may use a trigram-based index (see pg_trgm) or a reverse() function based index and search. Use 'varchar_pattern_ops', 'text_pattern_ops' or 'bpchar_pattern_ops' operators in your indexes to improve search with the LIKE operator respectively into varchar, text or char columns.    11 bitmap index(es). 1 domain index(es). 2 b-tree index(es).
+INDEX PARTITION 115     0       Only local indexes partition are exported, they are build on the column used for the partitioning.
+JOB     0       0       Job are not exported. You may set external cron job with them.
+MATERIALIZED VIEW       2       0       All materialized view will be exported as snapshot materialized views, they are only updated when fully refreshed.
+SYNONYM 0       0       SYNONYMs will be exported as views. SYNONYMs do not exists with PostgreSQL but a common workaround is to use views or set the PostgreSQL search_path in your session to access object outside the current schema.
+TABLE   9       0               Total number of rows: 112. Top 10 of tables sorted by number of rows:. products has 72 rows. countries has 35 rows. channels has 5 rows. Top 10 of largest tables:.
+TABLE PARTITION 35      0       Partitions are well supported by PostgreSQL except key partition which will not be exported.    RANGE.
+VIEW    1       0       Views are fully supported but can use specific functions.
+-------------------------------------------------------------------------------
+Total   188     0
+-------------------------------------------------------------------------------
+```
+* Формируем скрипты для переноса структуры:
+Таблицы:
+```
+ora2pg -b D:\ora2pg\data -t TABLE
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-27 22:17:51] [========================>] 9/9 tables (100.0%) end of scanning.
+[2025-05-27 22:17:52] [========================>] 9/9 tables (100.0%) end of table export.
+```
+View:
+```
+ora2pg -b D:\ora2pg\data -t VIEW
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-27 22:52:01] [========================>] 1/1 views (100.0%) end of output.
+```
+MVIEW:
+```
+ora2pg -b D:\ora2pg\data -t MVIEW
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-27 22:55:46] [========================>] 2/2 materialized views (100.0%) end of output.
+```
+PARTITION:
+```
+ora2pg -b D:\ora2pg\data -t PARTITION
+HINT: you should activate USER_GRANTS for a connection without DBA privilege. Continuing with USER privilege.
+[2025-05-27 22:21:26] [========================>] 35/35 partitions (100.0%) end of output.
+```
+* Перенос структуры
+
+Создаем в целевой БД Postgres польоавтеля SH и начинаем выполнять сформированные скрипты. Таблицы, патриции, view, mview. После выполнения всех скриптов получилась следующая БД:
+![INSCAST](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/schema.JPG?raw=true)
 
 ### Используемые ресурсы
 * Дистрибутивы docker oracle: https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance   

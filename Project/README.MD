@@ -537,7 +537,7 @@ Schema Export Complete
 ```
 Проверяем, что данные залились   
 ![COSTS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/cost.JPG?raw=true)   
-![CHANNELS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/sh.JPG?raw=true)   
+![CHANNELS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/ch.JPG?raw=true)   
 ### Используемые ресурсы
 * Дистрибутивы docker oracle: https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance   
 * Дисрибутив БД Oracle,с данными: https://github.com/oracle-samples/db-sample-schemas/releases/tag/v23.3   

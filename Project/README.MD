@@ -537,8 +537,17 @@ Schema Export Complete
 ```
 Проверяем, что данные залились   
 ![COSTS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/cost.JPG?raw=true)   
-![CHANNELS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/CH.JPG?raw=true)   
+![CHANNELS](https://github.com/H1trec/OTUS-Postgre-DBA-2025-01//blob/main/Project/CH.JPG?raw=true) 
+
+### Вместо вывода
+
+В итоге при помощи гугла и статьи на Хабре, мне удаалось выполнить миграцию небольшой БД Oracle без переноса PL/SQL кода. Сам процесс миграции занал не лишком большое время, больше времени было потрачено на отладку и исправление возникающих ошибок, которых было довольно много- это и ошбки при начальном развертываниии на VM Ubuntu, затем ошибки при установке всех моудлей уже на win средеб затем ошибки при миграции результатом, которых стала описанная конфигурация ora2pg  и этапы самой миграции.
+
+
 ### Используемые ресурсы
 * Дистрибутивы docker oracle: https://github.com/oracle/docker-images/tree/main/OracleDatabase/SingleInstance   
 * Дисрибутив БД Oracle,с данными: https://github.com/oracle-samples/db-sample-schemas/releases/tag/v23.3   
-
+* Документация по Ora2Pg: https://ora2pg.darold.net/documentation.html   
+* Вспомогателная статья на Хабр: https://habr.com/ru/companies/sigma/articles/669874/
+* Дистибутивы Oracle client: https://www.oracle.com/database/technologies/instant-client/downloads.html   
+* Дистрибутивы perl: https://strawberryperl.com/
